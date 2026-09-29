@@ -25,7 +25,7 @@ COMMON = os.path.normpath(os.path.join(HERE, ".."))         # common
 if COMMON not in sys.path:
     sys.path.insert(0, COMMON)
 
-from Objective import (
+from common.objectives import (
     fitness,
     get_instance,
     get_ceiling,
@@ -35,8 +35,8 @@ from Objective import (
 
 # Optionally seed the initial population with heuristic tours
 try:
-    from approximator.mst_solver import solve_with_details as _mst_details
-    from approximator.christofides_solver import solve_with_details as _chr_details
+    from common.approximators.MST_solver import solve_with_details as _mst_details
+    from common.approximators.christo_solver import solve_with_details as _chr_details
     _HAS_SEEDS = True
 except Exception:
     _HAS_SEEDS = False
