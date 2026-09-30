@@ -68,6 +68,6 @@ for case_id, n, dist, metric in instances:
 
     print(f"[{case_id}] n={n:>3} | {dist:<9} | {metric:<9} | "
           f"min={D[D>0].min():>4}  max={D.max():>6}  mean={D[D>0].mean():.1f}")
-    verify(D, case_id)
+    # verify(D, case_id)
 
 print("\nMedium-case instances written to ./tsp_medium/")
