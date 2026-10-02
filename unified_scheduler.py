@@ -136,13 +136,23 @@ def run_cmip_with_details(case_id, matrix, epochs=150, learning_rate=5e-4):
 # Christofides Baseline
 # =============================================================================
 def run_christofides(matrix):
-    G = nx.from_numpy_array(matrix)
-    cycle = nx.approximation.traveling_salesman_problem(
-        G, weight='weight', cycle=True, method=nx.approximation.christofides
-    )
+    n = len(matrix)
+    G = nx.complete_graph(n)
+    for i in range(n):
+        for j in range(i + 1, n):
+            G[i][j]['weight'] = matrix[i][j]
+                
+    try:
+        cycle = nx.approximation.traveling_salesman_problem(
+            G, weight='weight', cycle=True, method=nx.approximation.christofides
+        )
+    except Exception:
+        # Fallback to greedy TSP if christofides fails
+        cycle = nx.approximation.traveling_salesman_problem(
+            G, weight='weight', cycle=True, method=nx.approximation.greedy_tsp
+        )
     
     # Short-circuit the cycle to ensure exactly one visit per node (valid permutation)
-    # This prevents errors if networkx returns multiple repeated nodes for non-metric graphs
     tour = []
     seen = set()
     for node in cycle:
@@ -150,6 +160,12 @@ def run_christofides(matrix):
             seen.add(node)
             tour.append(node)
             
+    # In case any node was skipped, append it
+    if len(tour) < n:
+        for i in range(n):
+            if i not in seen:
+                tour.append(i)
+                
     return tour
 
 
